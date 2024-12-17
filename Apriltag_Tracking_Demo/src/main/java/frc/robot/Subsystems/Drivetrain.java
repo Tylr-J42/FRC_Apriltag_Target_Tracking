@@ -39,9 +39,9 @@ public class Drivetrain extends SubsystemBase{
         turningPID = new PIDController(driveConstants.kturningP, 0, 0);
     }
 
-    public Command arcadeDrive(DoubleSupplier x, DoubleSupplier y){
+    public Command arcadeDrive(DoubleSupplier x, DoubleSupplier z){
         return run(() -> {
-            drivetrain.arcadeDrive(x.getAsDouble(), y.getAsDouble());
+            drivetrain.arcadeDrive(x.getAsDouble(), z.getAsDouble());
         });
     }
 
