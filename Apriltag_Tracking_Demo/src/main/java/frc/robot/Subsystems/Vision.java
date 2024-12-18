@@ -18,15 +18,14 @@ public class Vision extends SubsystemBase{
 
         tag3tx = visionTable.getEntry("tag3tx");
         tag3ty = visionTable.getEntry("tag3ty");
-        
     }
 
-    public DoubleSupplier getTag3tx(){
-        return () -> tag3tx.getDouble(0.0);
+    public double getTag3tx(){
+        return tag3tx.getDouble(0.0);
     }
 
-    public DoubleSupplier getTag3ty(){
-        return () -> tag3ty.getDouble(0.0);
+    public double getTag3ty(){
+        return tag3ty.getDouble(0.0);
     }
     
 }

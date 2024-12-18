@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -15,6 +18,8 @@ public class RobotContainer {
 
     private Drivetrain drivetrain;
     private Vision vision;
+
+    private static final String kAutoTabName = "Autonomous";
     
     public RobotContainer() {
         driver = new CommandXboxController(0);
@@ -22,6 +27,17 @@ public class RobotContainer {
         vision = new Vision();
 
         configureBindings();
+        shuffleboardSetup();
+    }
+
+    private void shuffleboardSetup(){
+        ShuffleboardTab autoTab = Shuffleboard.getTab(kAutoTabName);
+
+        //Always select the auto tab on startup
+        Shuffleboard.selectTab(kAutoTabName);
+
+        autoTab.addDouble("tx", vision::getTag3tx);
+        autoTab.addDouble("ty", vision::getTag3ty);
     }
 
     private void configureBindings() {
@@ -29,7 +45,7 @@ public class RobotContainer {
             () -> driver.getLeftY(), 
             () -> driver.getRightX()));
 
-        driver.a().onTrue(drivetrain.trackApriltag(vision.getTag3ty()));
+        driver.a().onTrue(drivetrain.trackApriltag(vision::getTag3ty));
     }
 
     public Command getAutonomousCommand() {
