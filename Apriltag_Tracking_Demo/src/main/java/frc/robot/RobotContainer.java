@@ -37,17 +37,19 @@ public class RobotContainer {
 
         autoTab.addDouble("tx", vision::getTag3tx);
         autoTab.addDouble("ty", vision::getTag3ty);
+        autoTab.addDouble("Output Voltage", drivetrain::getTurningPIDOutput);
     }
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(drivetrain.arcadeDrive(
-            () -> driver.getLeftY(), 
+            () -> -driver.getLeftY(), 
             () -> driver.getRightX()));
 
         driver.a().onTrue(drivetrain.trackApriltag(vision::getTag3ty));
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return drivetrain.trackApriltag(vision::getTag3tx);
     }
+
 }

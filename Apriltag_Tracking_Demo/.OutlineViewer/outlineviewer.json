@@ -21,6 +21,12 @@
     },
     "open": true
   },
+  "client@2": {
+    "Publishers": {
+      "open": true
+    },
+    "open": true
+  },
   "outlineviewer@2": {
     "Publishers": {
       "open": true
@@ -32,6 +38,9 @@
   },
   "shuffleboard@1": {
     "Publishers": {
+      "open": true
+    },
+    "Subscribers": {
       "open": true
     },
     "open": true
