@@ -1,6 +1,5 @@
 package frc.robot.Subsystems;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
@@ -71,26 +70,12 @@ public class Drivetrain extends SubsystemBase{
                 );
     }
 
-    public Command trackApriltag(DoubleSupplier cam1Error, DoubleSupplier cam2Error, BooleanSupplier cam1Detected, BooleanSupplier cam2Detected){
+    public Command trackApriltag(DoubleSupplier targetError){
         return run(() -> {
-            if(cam1Detected.getAsBoolean() && !cam2Detected.getAsBoolean()){
-                tankDriveVoltage(
-                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0),
-                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0)
+            tankDriveVoltage(
+                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+targetError.getAsDouble()),
+                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+targetError.getAsDouble())
                 );
-            }else if(!cam1Detected.getAsBoolean() && cam2Detected.getAsBoolean()){
-                tankDriveVoltage(
-                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()-35.0),
-                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()-35.0)
-                );
-            }else if(cam1Detected.getAsBoolean() && cam2Detected.getAsBoolean()){
-                tankDriveVoltage(
-                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0),
-                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()+35.0)
-                );
-            }else{
-                tankDriveVoltage(0.0, 0.0);
-            }
         });
     }
 

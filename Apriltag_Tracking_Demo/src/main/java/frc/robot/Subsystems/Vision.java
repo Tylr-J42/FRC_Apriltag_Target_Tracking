@@ -61,5 +61,17 @@ public class Vision extends SubsystemBase{
     public double getFPS(){
         return framerate.get();
     }
+
+    public double getTargetOffset(){
+        if(getCam1Detected() && !getCam2Detected()){
+            return getCam1Tag3ty() + 35.0;
+        }else if(!getCam1Detected() && getCam2Detected()){
+            return getCam2Tag3ty() - 35.0;
+        }else if(getCam1Detected() && getCam2Detected()){
+            return getCam1Tag3ty() + 35.0;
+        }else{
+            return 0.0;
+        }
+    }
     
 }

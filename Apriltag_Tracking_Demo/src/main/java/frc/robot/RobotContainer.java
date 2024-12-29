@@ -43,6 +43,7 @@ public class RobotContainer {
         autoTab.addDouble("FPS", vision::getFPS);
         autoTab.addDouble("Output Voltage", drivetrain::getTurningPIDOutput);
         autoTab.addDouble("gyro angle", drivetrain::getGyroAngle);
+        autoTab.addDouble("Target Offset", vision::getTargetOffset);
     }
 
     private void configureBindings() {
@@ -50,11 +51,11 @@ public class RobotContainer {
             () -> -driver.getLeftY(), 
             () -> driver.getRightX()));
 
-        driver.a().onTrue(drivetrain.trackApriltag(vision::getCam1Tag3ty, vision::getCam2Tag3ty, vision::getCam1Detected, vision::getCam2Detected));
+        driver.a().onTrue(drivetrain.trackApriltag(vision::getTargetOffset));
     }
 
     public Command getAutonomousCommand() {
-        return drivetrain.trackApriltag(vision::getCam1Tag3ty, vision::getCam2Tag3ty, vision::getCam1Detected, vision::getCam2Detected);
+        return drivetrain.trackApriltag(vision::getTargetOffset);
     }
 
 }
