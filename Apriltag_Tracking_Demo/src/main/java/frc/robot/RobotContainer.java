@@ -7,10 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
+import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.Vision;
 
 public class RobotContainer {
     private CommandXboxController driver;
@@ -35,9 +34,15 @@ public class RobotContainer {
         //Always select the auto tab on startup
         Shuffleboard.selectTab(kAutoTabName);
 
-        autoTab.addDouble("tx", vision::getTag3tx);
-        autoTab.addDouble("ty", vision::getTag3ty);
+        autoTab.addDouble("cam1_tx", vision::getCam1Tag3tx);
+        autoTab.addDouble("cam1_ty", vision::getCam1Tag3ty);
+        autoTab.addBoolean("cam1_tag_detected", vision::getCam1Detected);
+        autoTab.addBoolean("cam2_tag_detected", vision::getCam2Detected);
+        autoTab.addDouble("cam2_tx", vision::getCam2Tag3tx);
+        autoTab.addDouble("cam2_ty", vision::getCam2Tag3ty);
+        autoTab.addDouble("FPS", vision::getFPS);
         autoTab.addDouble("Output Voltage", drivetrain::getTurningPIDOutput);
+        autoTab.addDouble("gyro angle", drivetrain::getGyroAngle);
     }
 
     private void configureBindings() {
@@ -45,11 +50,11 @@ public class RobotContainer {
             () -> -driver.getLeftY(), 
             () -> driver.getRightX()));
 
-        driver.a().onTrue(drivetrain.trackApriltag(vision::getTag3ty));
+        driver.a().onTrue(drivetrain.trackApriltag(vision::getCam1Tag3ty, vision::getCam2Tag3ty, vision::getCam1Detected, vision::getCam2Detected));
     }
 
     public Command getAutonomousCommand() {
-        return drivetrain.trackApriltag(vision::getTag3tx);
+        return drivetrain.trackApriltag(vision::getCam1Tag3ty, vision::getCam2Tag3ty, vision::getCam1Detected, vision::getCam2Detected);
     }
 
 }

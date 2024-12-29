@@ -1,5 +1,6 @@
-package frc.robot.subsystems;
+package frc.robot.Subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
@@ -22,7 +23,7 @@ public class Drivetrain extends SubsystemBase{
     private WPI_VictorSPX backLeft;
     private WPI_VictorSPX backRight;
     
-    //private ADXRS450_Gyro gyro;
+    private ADXRS450_Gyro gyro;
 
     private PIDController turningPID;
 
@@ -40,9 +41,10 @@ public class Drivetrain extends SubsystemBase{
 
         drivetrain = new DifferentialDrive(frontLeft, frontRight);
 
-        //gyro = new ADXRS450_Gyro();
+        gyro = new ADXRS450_Gyro();
 
         turningPID = new PIDController(driveConstants.kturningP, driveConstants.kturningI, driveConstants.kturningD);
+
     }
 
     public Command arcadeDrive(DoubleSupplier x, DoubleSupplier z){
@@ -69,18 +71,34 @@ public class Drivetrain extends SubsystemBase{
                 );
     }
 
-    public Command trackApriltag(DoubleSupplier zError){
+    public Command trackApriltag(DoubleSupplier cam1Error, DoubleSupplier cam2Error, BooleanSupplier cam1Detected, BooleanSupplier cam2Detected){
         return run(() -> {
-            tankDriveVoltage(
-                // turningPID.calculate(gyro.getAngle(), gyro.getAngle()+zError.getAsDouble()),
-                //-turningPID.calculate(gyro.getAngle(), gyro.getAngle()+zError.getAsDouble())
-                turningPID.calculate(0.0, zError.getAsDouble()),
-                -turningPID.calculate(0.0, zError.getAsDouble())
-            );
+            if(cam1Detected.getAsBoolean() && !cam2Detected.getAsBoolean()){
+                tankDriveVoltage(
+                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0),
+                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0)
+                );
+            }else if(!cam1Detected.getAsBoolean() && cam2Detected.getAsBoolean()){
+                tankDriveVoltage(
+                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()-35.0),
+                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()-35.0)
+                );
+            }else if(cam1Detected.getAsBoolean() && cam2Detected.getAsBoolean()){
+                tankDriveVoltage(
+                    turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam1Error.getAsDouble()+35.0),
+                    -turningPID.calculate(gyro.getAngle(), gyro.getAngle()+cam2Error.getAsDouble()+35.0)
+                );
+            }else{
+                tankDriveVoltage(0.0, 0.0);
+            }
         });
     }
 
     public double getTurningPIDOutput(){
         return frontLeft.getMotorOutputVoltage();
+    }
+
+    public double getGyroAngle(){
+        return gyro.getAngle();
     }
 }
